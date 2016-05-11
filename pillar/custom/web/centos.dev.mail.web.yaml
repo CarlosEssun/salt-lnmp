@@ -1,0 +1,14 @@
+nginx:
+  port: 81
+  version: '1_8_0'
+
+
+php:
+  port: 9001
+  version: '5_5_30'
+
+
+cache:
+   dirs:
+    - '/var/cache1/'
+    - '/var/cache2/'

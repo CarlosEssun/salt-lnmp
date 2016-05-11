@@ -1,0 +1,3 @@
+mysql:
+  port: 3307
+  version: '5_6_16'

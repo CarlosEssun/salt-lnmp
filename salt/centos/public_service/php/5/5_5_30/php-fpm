@@ -1,0 +1,80 @@
+#!/bin/sh
+# chkconfig: - 85 15
+# description: php
+# processname: php-fpm
+# pidfile: /usr/local/php/var/run/php.pid
+# config: /usr/local/php/etc/php-fpm.conf
+
+phpd=/opt/php/sbin/php-fpm
+php_pid=/usr/local/php/var/run/php-fpm.pid
+
+RETVAL=0
+prog="php-fpm"
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+[ -x $phpd ] || exit 0
+
+
+# Start php daemons functions.
+start() {
+
+   if [ -e $php_pid ];then
+	echo "php already running...."
+	exit 1
+   fi
+
+   echo -n $"Starting $prog: "
+   daemon $phpd
+   RETVAL=$?
+   echo
+   [ $RETVAL = 0 ] && touch /var/lock/subsys/php
+   return $RETVAL
+
+}
+
+
+# Stop php daemons functions.
+stop() {
+        echo -n $"Stopping $prog: "
+        killproc $phpd
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && rm -f /var/lock/subsys/php $php_pid
+}
+
+
+
+# See how we were called.
+case "$1" in
+start)
+        start
+        ;;
+
+stop)
+        stop
+        ;;
+
+restart)
+        stop
+        start
+        ;;
+
+status)
+        status $prog
+        RETVAL=$?
+        ;;
+*)
+        echo $"Usage: $prog {start|stop|restart|status|help}"
+        exit 1
+esac
+
+exit $RETVAL
+
