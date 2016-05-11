@@ -396,6 +396,77 @@ low data
      低级数据就是经过render和parser编译过的数据 
 
 
+##### sls转化到json
+```bash
+In [14]: !cat test.sls
+/tmp/foo.conf:
+  file.managed:
+   - source: salt://foo.conf
+   - user: root
+   - group: root
+   - mode: 644
+   - backup: minion
+
+with open('test.sls','r')as f:
+   print yaml.safe_load(f)
+
+In [15]: with open('test.sls','r')as f:
+    print json.dumps(yaml.safe_load(f),indent=4)
+   ....:     
+{
+    "/tmp/foo.conf": {
+        "file.managed": [
+            {
+                "source": "salt://foo.conf"
+            }, 
+            {
+                "user": "root"
+            }, 
+            {
+                "group": "root"
+            }, 
+            {
+                "mode": 644
+            }, 
+            {
+                "backup": "minion"
+            }
+        ]
+    }
+}
+
+```
+##### 内置变量
+
+* __opts__:表示salt的配置文件，如果有模块定义在__opts__里，这些值将包含其内
+
+```python
+import salt.config
+mast_opt = salt.config.client_config('/etc/salt/master')
+```
+*  __salt__：模块字典类型，不必重复己经存在的功能【运行于maste端】
+
+*  __grains__: minion属性信息字典，以供pillar调用。
+```python
+        import salt.config
+        import salt.loader
+        __opts__ = salt.config.minion_config('/etc/salt/minion')
+        __grains__ = salt.loader.grains(__opts__)
+        __opts__['grains'] = __grains__
+        __salt__ = salt.loader.minion_mods(__opts__)
+        __salt__['test.ping']()
+```
+##### 事件与loader
+* 事件：
+```python
+event = salt.utils.event.MasterEvent(__opts__['sock_dir'])
+for eachevent in event.iter_events(full=True):
+```
+
+* loader
+装载子系统可以概括的认为是salt的心脏，sa;t本身是集成了一系列模块，与Loader子系统绑定。 在master与agent和代理这样的层次结构中由Loader子系统管理模块，包括模块的动态加载，grains 加载等
+
+
 ##### 扩展的state 
 
 * test.sls
@@ -575,46 +646,6 @@ salt '*'    cmd.run 'ls'   --return=mysql
 
 https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html
 
-##### sls转化到json
-```bash
-In [14]: !cat test.sls
-/tmp/foo.conf:
-  file.managed:
-   - source: salt://foo.conf
-   - user: root
-   - group: root
-   - mode: 644
-   - backup: minion
-
-with open('test.sls','r')as f:
-   print yaml.safe_load(f)
-
-In [15]: with open('test.sls','r')as f:
-    print json.dumps(yaml.safe_load(f),indent=4)
-   ....:     
-{
-    "/tmp/foo.conf": {
-        "file.managed": [
-            {
-                "source": "salt://foo.conf"
-            }, 
-            {
-                "user": "root"
-            }, 
-            {
-                "group": "root"
-            }, 
-            {
-                "mode": 644
-            }, 
-            {
-                "backup": "minion"
-            }
-        ]
-    }
-}
-
-```
 ##### 自动化部署
 * lnmp集群
 
