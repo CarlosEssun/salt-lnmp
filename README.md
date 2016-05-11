@@ -288,7 +288,11 @@ def run():
 ```
 * pillar中数据是如何使用的
    pillar  解析后是dict对象，直接可以使用python语法，可以用索引（pillar['pkgs']['apace']）或get方法（pillar.get('user'),{}）.我更喜欢使用后者，如果匹配不到数据也不会报错
-扩展的pillar
+* 同步pillar信息
+```bash
+salt \* saltutil.refresh_pillar
+
+```
 
 ##### event 
 查看事件：
