@@ -295,7 +295,7 @@ def run():
 ```bash
 salt-run state.event pretty=True
 ```
-#####state vs Formulas state
+##### state vs Formulas state
 
 * 前提
   `ymal`
@@ -316,7 +316,10 @@ salt-run state.event pretty=True
 * state 
  state 文件是salt的核心，而这也就是他为什么会被叫做配置管理，sls文件默认格式是Yaml格式，并默认使用jinja模板，YAML是一种简单的适合用来传输数据 的格式，而jinja是根据Django的模板语言发展而来的语言，简单强大；state文件主要描述了系统，软件，服务，配置文件应该处于的状态。通常state，pillar,top file会用sls文件来编写。state文件默认是放在/srv/salt中，它与你的master配置文件中的file_roots设置有关。
 
+
+
 1. 查看`state`列表
+
 ```bash
 [root@salt ~]# salt 'centos.dev.mail.slave' sys.list_state_modules
 centos.dev.mail.slave:
@@ -331,6 +334,8 @@ centos.dev.mail.slave:
     - cloud
 .......
 ```
+
+
 2. 查看指定state的函数
 ```bash
 [root@salt ~]# salt 'centos.dev.mail.slave' sys.list_state_functions user
@@ -338,6 +343,8 @@ centos.dev.mail.slave:
     - user.absent
     - user.present
 ```
+
+
 3. 查看指定state的用法
 ```bash
 [root@salt ~]# salt 'centos.dev.mail.slave' sys.state_doc user.absent
@@ -381,6 +388,8 @@ centos.dev.mail.slave:
                 option to True to remove the user even if they are logged in. Not
                 supported in FreeBSD and Solaris, Default is ``False``.
 ```
+
+
 4. 写State的几种格式
 
 high data
