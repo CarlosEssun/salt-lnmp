@@ -290,7 +290,7 @@ def run():
    pillar  解析后是dict对象，直接可以使用python语法，可以用索引（pillar['pkgs']['apace']）或get方法（pillar.get('user'),{}）.我更喜欢使用后者，如果匹配不到数据也不会报错
 扩展的pillar
 
-#####event 
+##### event 
 查看事件：
 ```bash
 salt-run state.event pretty=True
@@ -396,7 +396,8 @@ low data
      低级数据就是经过render和parser编译过的数据 
 
 
- 扩展的state 
+##### 扩展的state 
+
 * test.sls
 ```yaml
 /etc/sysconfig/network-scripts/ifcfg-:
@@ -457,7 +458,8 @@ def files(name='/etc/sysconfig/network-scripts/',
     return ret
 
 ```
-#####Return 
+##### Return 
+
  *  执行过程
   `master`触发作业，然后由`minon`接收处理任务后直接与`return`存储服务器建立连接，然后将数据`return`存到存储服务器。
 1. 修改源码
@@ -465,7 +467,7 @@ def files(name='/etc/sysconfig/network-scripts/',
 
 
 2. 自写reutns
-在master上在添加mysql认证
+* 在master上在添加mysql认证
 ```bash
 [root@dev master.d]# cat mysql_auth.conf 
 mysql.host: '127.0.0.1'
@@ -475,7 +477,7 @@ mysql.db: 'salt'
 mysql.port: 3306
 
 ```
-创建数据库授权
+* 创建数据库授权
 ```bash
 CREATE DATABASE  `salt`
   DEFAULT CHARACTER SET utf8
@@ -512,7 +514,7 @@ CREATE TABLE `salt_returns` (
   KEY `fun` (`fun`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-#授权
+# 授权
 mysql> show grants for salt@'192.168.1.%';
 +------------------------------------------------------------------------------------------------------------------------+
 | Grants for salt@192.168.1.%                                                                                            |
@@ -522,7 +524,7 @@ mysql> show grants for salt@'192.168.1.%';
 1 row in set (0.00 sec)
 
 ```
-定义returners
+* 定义returners
 ```python
 #!/bin/env python
 #coding=utf8
@@ -565,7 +567,7 @@ for eachevent in event.iter_events(full=True):
     else:
         pass
 ```
-测试
+* 测试
 ```
 salt '*'    cmd.run 'ls'   --return=mysql
 ```
@@ -573,7 +575,7 @@ salt '*'    cmd.run 'ls'   --return=mysql
 
 https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html
 
-sls转化到json
+##### sls转化到json
 ```bash
 In [14]: !cat test.sls
 /tmp/foo.conf:
@@ -613,8 +615,8 @@ In [15]: with open('test.sls','r')as f:
 }
 
 ```
-####自动化部署
-> lnmp集群
+##### 自动化部署
+* lnmp集群
 
 ```bash
 [root@dev srv]# tree
@@ -679,7 +681,8 @@ In [15]: with open('test.sls','r')as f:
 20 directories, 36 files
 
 ```
-`pillar`
+* `pillar`
+
 ```bash
 [root@dev pillar]# cat top.sls 
 base:
