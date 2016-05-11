@@ -392,9 +392,14 @@ centos.dev.mail.slave:
 
 high data
       高级数据我理解的就是我们编写sls文件的数据
+```bash
+salt  'centos.dev.mail.web' state.show_highstate
+```
 low data
      低级数据就是经过render和parser编译过的数据 
-
+```bash
+salt  'centos.dev.mail.web' state.show_lowstate
+```
 
 ##### sls转化到json
 ```bash
