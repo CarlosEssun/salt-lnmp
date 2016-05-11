@@ -137,7 +137,7 @@ grains是minion第一次启动的时候采集的静态数据，可以用在salt�
 通过python脚本来实现，只需要定义字典或导入json模块，定义收集信息，返回字典
 
   grains  模块及说明
-```
+``` bash
 [root@dev ~]# salt 'centos.dev.mail.web' sys.list_functions grains
 centos.dev.mail.web:
     - grains.append
