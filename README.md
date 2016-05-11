@@ -137,7 +137,7 @@ grains是minion第一次启动的时候采集的静态数据，可以用在salt�
 通过python脚本来实现，只需要定义字典或导入json模块，定义收集信息，返回字典
 
   grains  模块及说明
-``` bash
+```bash
 [root@dev ~]# salt 'centos.dev.mail.web' sys.list_functions grains
 centos.dev.mail.web:
     - grains.append
@@ -154,7 +154,7 @@ centos.dev.mail.web:
     - grains.setvals
 ```
 单个函数的说明
-```
+```bash
 [root@dev ~]# salt 'centos.dev.mail.web' sys.doc grains.ls
 'grains.ls:'
 
@@ -164,7 +164,7 @@ centos.dev.mail.web:
 
         salt '*' grains.ls
 ```
-```
+```bash
 salt 'Minion' grains.get ipv4:2
 ```
 *  grains  优先级
@@ -174,7 +174,7 @@ salt 'Minion' grains.get ipv4:2
   最后就是 `salt` 中的core grains
 
 * 定义grains
-``` 
+```python
 def open_moutil_port ():
     grains={}
     grains['web_port']='80'
@@ -186,7 +186,7 @@ def open_moutil_port ():
 扩展的grains都存储于`/var/cahce/salt/minion/extmods/grains` 下面
 
 * 同步 grains
-```
+```bash
 salt '*' saltutil.sync_grains  #同步grains,自动刷新
 salt '*' saltutil.sync_all  #同步有类型的组件
 salt '*' state.highstate # 主动检索组件到指定的minion
@@ -229,26 +229,26 @@ salt '*' state.highstate # 主动检索组件到指定的minion
   3. 怎么定义pillar数据
 * master 的配置文件中定义
 在默认的情况下，master配置文件中的所有数据都添加到pillar中，且对有所有的minion可用，如果要禁用这一默认值 ，可以在master的配置文件添加如下数据
-```
+```bash
 pillar_opts: False 
 ```
 * 使用SLS文件定义pillar
 pillar使用与stats相似的SLS文件，pillar 所使用的根目录在master中通过pillar_roots来定义，因为默认使用YAML语法解析，所以要使用YAML的语法格式定义
-```
+```bash
 pillar_roots:
   base:
- \   - /srv/pillar
+    - /srv/pillar
 ```
 这里定义了 base环境下的 pillar的目录，与state一样,pillar也需要top文件 ，也使用相同的匹配方式将数据应用到minion上，定义与state一样 : /srv/pillar/top.sls     
-```
+```bash
 base:
   "*":
-  \ - custom.install_web_ext
+   - custom.install_web_ext
 ```
 这样后就要在 /srv/pillar/创建一个custom的文件夹并在里面创建install_web_ext.sls[在salt中.(点)有特殊意义，我个人认为这是在分级]，如果custom中只有一个sls文件，也就可以将install_web_ext 改名在init，这样在top文件中也不用写custom.install_web_ext直接写custom 就可以了，因为默认是找init.sls文件。
 * sls文件常定义的格式
 使用jinja定义的，目录为 `/srv/pillar/coustom/install_web_ext.sls`
-```
+```jinja
 {% if grains['os'] == 'RedHat' %}
 apache: httpd
 git: git
@@ -259,14 +259,14 @@ git: git-core
 ```
 利用条件判断与grains结合。
 使用匹配方式,利用grains
-```
+```bash
 dev:
   'os:Debian':
-  \  - match: grain
-   \ - servers
+    - match: grain
+    - servers
 ```
 * 还有使用python自行定义
-```
+```python
 #!py
 #coding:utf-8
 import yaml
@@ -292,7 +292,7 @@ def run():
 
 #####event 
 查看事件：
-```
+```bash
 salt-run state.event pretty=True
 ```
 #####state vs Formulas state
@@ -317,7 +317,7 @@ salt-run state.event pretty=True
  state 文件是salt的核心，而这也就是他为什么会被叫做配置管理，sls文件默认格式是Yaml格式，并默认使用jinja模板，YAML是一种简单的适合用来传输数据 的格式，而jinja是根据Django的模板语言发展而来的语言，简单强大；state文件主要描述了系统，软件，服务，配置文件应该处于的状态。通常state，pillar,top file会用sls文件来编写。state文件默认是放在/srv/salt中，它与你的master配置文件中的file_roots设置有关。
 
 1. 查看`state`列表
-```
+```bash
 [root@salt ~]# salt 'centos.dev.mail.slave' sys.list_state_modules
 centos.dev.mail.slave:
     - acl
@@ -332,14 +332,14 @@ centos.dev.mail.slave:
 .......
 ```
 2. 查看指定state的函数
-```
+```bash
 [root@salt ~]# salt 'centos.dev.mail.slave' sys.list_state_functions user
 centos.dev.mail.slave:
     - user.absent
     - user.present
 ```
 3. 查看指定state的用法
-```
+```bash
 [root@salt ~]# salt 'centos.dev.mail.slave' sys.state_doc user.absent
 centos.dev.mail.slave:
     ----------
@@ -391,7 +391,7 @@ low data
 
  扩展的state 
 * test.sls
-```
+```yaml
 /etc/sysconfig/network-scripts/ifcfg-:
   set_network_card.files:
     - interface: eth0_0
@@ -405,7 +405,7 @@ low data
 ```
 
 * _states/set_network_card.py
-```
+```python
 #! /usr/bin/env python
 # coding:utf8
 # date: 2016-4-7
@@ -459,7 +459,7 @@ def files(name='/etc/sysconfig/network-scripts/',
 
 2. 自写reutns
 在master上在添加mysql认证
-```
+```bash
 [root@dev master.d]# cat mysql_auth.conf 
 mysql.host: '127.0.0.1'
 mysql.user: 'salt'
@@ -469,7 +469,7 @@ mysql.port: 3306
 
 ```
 创建数据库授权
-```
+```bash
 CREATE DATABASE  `salt`
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
@@ -516,7 +516,7 @@ mysql> show grants for salt@'192.168.1.%';
 
 ```
 定义returners
-```
+```python
 #!/bin/env python
 #coding=utf8
 
@@ -567,7 +567,7 @@ salt '*'    cmd.run 'ls'   --return=mysql
 https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html
 
 sls转化到json
-```
+```bash
 In [14]: !cat test.sls
 /tmp/foo.conf:
   file.managed:
@@ -609,7 +609,7 @@ In [15]: with open('test.sls','r')as f:
 ####自动化部署
 > lnmp集群
 
-```
+```bash
 [root@dev srv]# tree
 .
 ├── pillar
@@ -673,7 +673,7 @@ In [15]: with open('test.sls','r')as f:
 
 ```
 `pillar`
-```
+```bash
 [root@dev pillar]# cat top.sls 
 base:
   '*':
